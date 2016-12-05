@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="mysql-connector-java-5.1.27-bin">
+    <CLASSES>
+      <root url="file://G:/xdy_copy/LinkedMdb/lib" />
+      <root url="file://G:/xdy_copy/LinkedMdb/lib" />
+      <root url="file://G:/lib/jung2-2_0_1" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://G:/xdy_copy/LinkedMdb/lib/jexcelapi/docs" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://G:/xdy_copy/LinkedMdb/lib/jexcelapi/build" />
+      <root url="file://G:/xdy_copy/LinkedMdb/lib/jexcelapi/src" />
+    </SOURCES>
+    <jarDirectory url="file://G:/lib/jung2-2_0_1" recursive="false" />
+    <jarDirectory url="file://G:/xdy_copy/LinkedMdb/lib" recursive="false" />
+  </library>
+</component>
