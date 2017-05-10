@@ -1,4 +1,4 @@
-package graphConstruction.pagerank;
+package xdy.graphConstruction.pagerank;
 
 /**
  * Created by cheng jin on 2016/11/22.

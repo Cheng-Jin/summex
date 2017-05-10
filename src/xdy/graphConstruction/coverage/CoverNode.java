@@ -1,4 +1,4 @@
-package graphConstruction.coverage;
+package xdy.graphConstruction.coverage;
 
  
 public class CoverNode {

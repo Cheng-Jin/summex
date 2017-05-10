@@ -1,4 +1,4 @@
-package graphConstruction.coverage;
+package xdy.graphConstruction.coverage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import DataSources.GRAPHS;
-import DataSources.INFOS;
 import mysql.DBCPManager;
 
 public class CoverValue implements Runnable{
@@ -87,7 +86,7 @@ public class CoverValue implements Runnable{
 				double p_cover = covers.getPCovers().get(p);
 				nodes.get(i).setPCover(p_cover);
 			}
-//			System.out.println(nodes.get(i).getId() + "	" + nodes.get(i).getPCover() + "	" + nodes.get(i).getClassCover());
+//			System.out.println(nodes.get(i).getId() + "	" + nodes.get(i).getPropertyCoverage() + "	" + nodes.get(i).getClassCover());
 		}
 		Update();
 	}
@@ -95,13 +94,13 @@ public class CoverValue implements Runnable{
 	public static void main(String[] args){
 		BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();  
 		ThreadPoolExecutor exec = new ThreadPoolExecutor(4, 5, 7, TimeUnit.DAYS, queue);
-		GRAPHS graph = GRAPHS.myexperiment_graph;
-		int taskNumber = 2933943;
+		GRAPHS graph = GRAPHS.interpro_graph;
+		int taskNumber = 3816810;
 //		GRAPHS graph = GRAPHS.dogfood_graph_modified;
 //		int taskNumber = 304758;
-		for (int i = 1504352; i<= taskNumber; i= i+ 5000) {
+		for (int i = 1; i<= taskNumber; i= i+ 10000) {
 			int start = i;
-			int end = i+ 4999;
+			int end = i+9999;
 			if(end > taskNumber)
 				end = taskNumber;
 			CoverValue a = new CoverValue(start, end, graph);

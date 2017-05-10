@@ -1,7 +1,4 @@
-package graphConstruction.neighbors;
-
-import java.util.HashSet;
-import java.util.Set;
+package xdy.graphConstruction.neighbors;
 
 /**
  * Created by xdy on 2016/11/20.

@@ -1,16 +1,10 @@
-package summarization;
+package xdy;
 
 import DataSources.GRAPHS;
-import DataSources.LRUCache;
-import mysql.DBCPManager;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public class Greedy {
 	private GRAPHS tablename;
@@ -21,16 +15,17 @@ public class Greedy {
 	private long ReadMysqlTime;
 	private long ComputeTime;
 	HashSet<Integer> candidateset; 		//可被选中的集合
-	HashMap<Integer, FullNode> node_list;		// 已被选中的三元组 (id -> summarization.FullNode)
+	HashMap<Integer, FullNode> node_list;		// 已被选中的三元组 (id -> xdy.FullNode)
 	HashSet<Integer> node_id_list; 	// 已被选中的三元组的id
 	HashMap<Integer, FullNode> cache;
 	HashMap<String, HashSet<String>> propertieswithclasses;		//每个三元组中实体对应的property和类型
 	HashSet<String> classes;			//已被选中的实体的类型
 	HashMap<String, String> s_types;		//	每个实体的类型
 	HashMap<Integer, FullNode> totalgraph;   //所有三元组构成的图
+	HashMap<String, Set<Integer>> entityIdMap;
 //	LRUCache<Integer, HashSet<Integer>> neighborsCache;
 	
-	public Greedy(GRAPHS tablename, int R, int start, double alpha, double beta, HashMap<Integer, FullNode> totalgraph, HashMap<String, String> s_types){
+	public Greedy(GRAPHS tablename, int R, int start, double alpha, double beta, HashMap<Integer, FullNode> totalgraph, HashMap<String, String> s_types, HashMap<String, Set<Integer>> entityIdMap){
 		this.tablename = tablename;
 		this.R = R;
 		this.alpha = alpha;
@@ -40,6 +35,7 @@ public class Greedy {
 		this.ComputeTime = 0;
 		this.totalgraph = totalgraph;
 		this.s_types = s_types;
+		this.entityIdMap = entityIdMap;
 		
 		node_id_list = new HashSet<Integer>();
 		node_id_list.add(start);  //从当前start开始
@@ -55,7 +51,8 @@ public class Greedy {
 		node_list.put(start, start_node);
 		
 		candidateset = new HashSet<Integer>();
-		candidateset.addAll(start_node.getNeighbors());
+//		candidateset.addAll(start_node.getNeighbors());
+		UpdateCandidateSet(start_node);
 //        temp1 = System.currentTimeMillis();
 //		candidateset.addAll(getNeighborsFromId(start));
 //        temp2 = System.currentTimeMillis();
@@ -176,15 +173,20 @@ public class Greedy {
 	
 	private void UpdateCandidateSet(FullNode node){
         int id = node.getId();
+		String s = node.getS();
+		String o = node.getO();
+		candidateset.addAll(this.entityIdMap.get(s));
+		if (this.entityIdMap.containsKey(o))
+			candidateset.addAll(this.entityIdMap.get(o));
 		candidateset.remove((Integer) id);
 //		candidateset.addAll(getNeighborsFromId(id));
-        candidateset.addAll(node.getNeighbors());
+//        candidateset.addAll(node.getNeighbors());
 		Iterator<Integer> it = node_id_list.iterator();
 		while(it.hasNext()){
 			int nid = it.next();
 			candidateset.remove((Integer)nid);
 		}
-		it = candidateset.iterator();
+//		it = candidateset.iterator();
 	}
 	public HashMap<Integer, FullNode> getSummary(){
 		return this.node_list;

@@ -1,7 +1,6 @@
-package graphConstruction.coverage;
+package xdy.graphConstruction.coverage;
 
 import DataSources.GRAPHS;
-import DataSources.INFOS;
 import mysql.DBCPManager;
 
 import java.sql.Connection;

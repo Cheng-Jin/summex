@@ -1,4 +1,4 @@
-package graphConstruction;
+package xdy.graphConstruction;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -7,8 +7,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.FileManager;
 import mysql.DBCPManager;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -78,11 +77,71 @@ public class readAndWrite {
             write(read(files.getAbsolutePath() + File.separator + f, format), tablename);
         }
     }
+
+
+    // TODO: 2016/12/8 解析nq文件 
+    public static void readAndWritreNQ(String filename, String tablename){
+        Connection con = DBCPManager.getInstance().getConnection();
+        if (con == null)
+            throw new IllegalArgumentException("database connected error!!!");
+        System.out.println(con);
+        BufferedReader br;
+        String line;
+        int count = 0;
+        try {
+            PreparedStatement pstmt = con.prepareStatement("insert into " + tablename + "(s,p,o) values(?, ?, ?)");
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filename))));
+            while ((line = br.readLine()) != null){
+                int leftIndex = line.indexOf("<");
+                int rightIndex = line.indexOf(">");
+
+                String s = line.substring(leftIndex + 1, rightIndex);
+
+                leftIndex = line.indexOf("<", rightIndex);
+                rightIndex = line.indexOf(">", leftIndex);
+
+                String p = line.substring(leftIndex + 1, rightIndex);
+
+                leftIndex = rightIndex + 2;
+                // TODO: 2016/12/8 literal
+                if (line.charAt(leftIndex) == '"'){
+                 rightIndex = line.indexOf('"', leftIndex + 1) + 1;
+                }
+                // TODO: 2016/12/8 url
+                else {
+                    leftIndex ++;
+                    rightIndex = line.indexOf(">", leftIndex);
+                }
+                String o = line.substring(leftIndex, rightIndex);
+                System.out.println(s + "    " + p + "   " + o);
+                pstmt.setString(1, s);
+                pstmt.setString(2, p);
+                pstmt.setString(3, o);
+                pstmt.addBatch();
+                count++;
+                if (count % 10000 == 0){
+                    pstmt.executeBatch();
+                    System.out.println("inserted   " + count);
+                }
+            }
+            pstmt.executeBatch();
+            System.out.println("totally inserted " + count);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        finally {
+        }
+
+    }
     public static void main(String[] args) {
-        String filepath = "f:\\datasets\\muninn-Dump-Latest.nq";
-        String format = "n-quads";
-        String tablename = "muninn_graph";
+        String filepath = "C:\\Users\\cheng jin\\Desktop\\hgnc_complete_set.nq\\hgnc_complete_set.nq";
+//        String format = "n-Triples";
+        String tablename = "hgnc_graph";
 //        runDir(filepath, format, tablename);
-        run(filepath, format, tablename);
+//        run(filepath, format, tablename);
+
+        readAndWritreNQ(filepath, tablename);
     }
 }
